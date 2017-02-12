@@ -43,7 +43,11 @@ aplicaOperacion op l r
 -- Función recursiva que calcula una aproximación con un número entero a la raíz
 -- cuadrada.
 raizEntera :: Int -> Int
+<<<<<<< HEAD
 raizEntera n = error "Función implementada"
+=======
+raizEntera n = error "Función no implementada"
+>>>>>>> Agrego práctica 1 de lógica
 
 -- Función recursiva que devuelve la suma de los primeros n números naturales.
 sumaNat :: Int -> Int
@@ -114,3 +118,4 @@ listaComprension1 =[(2^x)-1 | x <- [0,1..6]]
 
 listaComprension2::[(Int,Int)]
 listaComprension2 = [(x, x+1) | x <- [3,7..99]]
+
