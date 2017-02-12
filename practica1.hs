@@ -104,7 +104,7 @@ reversa (x:xs) = (reversa xs)++[x]
 -- Función que devuelve una lista con los elementos que cumplen con el predicado
 -- recibido como parámetro
 filtra :: (a -> Bool) -> [a] -> [a]
-filtra p l = error "Función no implementada"
+filtra f = foldr (\x r -> if f x then x:r else r) []
 
 -- Función que toma una lista como parámetro y regresa otra lista con los 
 -- elementos que aparecen una única vez en la original.
