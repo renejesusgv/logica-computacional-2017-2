@@ -104,8 +104,11 @@ apariciones ls = error "Función no implementada"
 -- una lista de pares cuyos elementos son (a0,ap) (a1,ao) (a2 an). Se debe 
 -- asegurar que la lista recibida siemre sea de longitud par.
 empareja :: [a] -> [(a,a)]
-empareja ls = error "Función no implementada"
+empareja ls = if mod (length ls) 2 == 0 then fooEmpareja ls else error "Imposible realizar accion. Lista de longitud impar"
 
+fooEmpareja:: [a]->[(a,a)]
+fooEmpareja [] = []
+fooEmpareja (x:xs) = [(x,last xs)]++ fooEmpareja (init xs)
 
 -- AGREGA AQUÍ LA DEFINICIÓN DE LAS LISTAS POR COMPRENSIÓN
 
