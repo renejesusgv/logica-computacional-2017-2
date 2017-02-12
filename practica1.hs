@@ -55,7 +55,11 @@ sumaNat n = if n == 0 then 0 else n + sumaNat (n-1)
 
 -- Función recursiva que devuelve la longitud de un número entero.
 longitud :: Int -> Int
-longitud n = error "Función no implementada"
+longitud n
+	| n == 0 = 1
+	| n < 10 = 1
+	| n >= 10 = 1 + longitud (div n 10)
+	| otherwise = error "Número no válido"
 
 -- Función que regresa una lista con los n primeros números de tribonacci 
 -- iniciando con 0, 0, 1.
@@ -72,6 +76,14 @@ fibonacci n
 -- Función que dada una lista elimina los elementos duplicados adyacentes de una
 -- lista dejando únicamente una aparición de cada elemento. La implementación de
 -- esta función usa foldr.
+
+--Funcion que compara dos elementos y en caso de ser iguales regresa una lista con el 
+--elemento repetido. De lo contrario regresa una lista con los dos elementos.
+compara :: Eq a => a -> a -> [a]
+compara a b 
+	| a == b = [a]
+	| otherwise = a:b:[]
+
 elimDup :: [a] -> [a]
 elimDup ls = error "Función no implementada"
 
