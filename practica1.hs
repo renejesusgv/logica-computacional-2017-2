@@ -43,14 +43,13 @@ aplicaOperacion op l r
 -- Función recursiva que calcula una aproximación con un número entero a la raíz
 -- cuadrada.
 raizEntera :: Int -> Int
-raizEntera 0 = 0
-raizEntera x = raizEnteraCol x 1
+raizEntera n = raizEnteraTail n 1
+	where raizEnteraTail x c
+		| x == 0 = 0
+		| c*c == x = c
+		| c*c < x = raizEnteraTail x (c+1)
+		| otherwise = c-1
 
-raizEnteraCol :: Int -> Int -> Int
-raizEnteraCol x c
-	| c * c == x = c
-	| c * c < x = raizEnteraCol x c+1
-	| otherwise = c-1 
 
 
 -- Función recursiva que devuelve la suma de los primeros n números naturales.
