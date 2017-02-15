@@ -109,8 +109,11 @@ filtra f = foldr (\x r -> if f x then x:r else r) []
 
 -- Función que toma una lista como parámetro y regresa otra lista con los 
 -- elementos que aparecen una única vez en la original.
-unicaVez :: [a] -> [a]
-unicaVez l = error "Función no implementada"
+unicaVez ::(Eq a) => [a] -> [a]
+unicaVez [] = []
+unicaVez (x:xs) = if elem x xs then unicaVez xs else x:unicaVez xs
+
+
 
 -- Función que recibe una lista y regresa una lista de pares (k, x), donde k es
 -- el número de apariciones consecutivas de x en la lista recibida.
