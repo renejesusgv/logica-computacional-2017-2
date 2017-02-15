@@ -51,7 +51,6 @@ raizEntera n = raizEnteraTail n 1
 		| otherwise = c-1
 
 
-
 -- Función recursiva que devuelve la suma de los primeros n números naturales.
 sumaNat :: Int -> Int
 sumaNat n = if n == 0 then 0 else n + sumaNat (n-1)
@@ -88,15 +87,14 @@ compara a b
 	| otherwise = a:b:[]
 
 elimDup :: [a] -> [a]
-elimDup ls = error "Función no implementada"
+elimDup [] = []
+--elimDup l = foldr (compara) [] l 
 
 -- Función que dada una función de comparación y una lista como parámetros,
 -- devuelve el elemento maximal de la lista para esa función de comparación. La
 -- implementación de esta función usa foldl.
-maximal :: (a -> a -> a) -> [a] -> a
-maximal f l =error "Función no implementada"
-
--- foldl (f) [] l
+maximal :: (Eq a) => (a -> a -> a) -> [a] -> a
+maximal f (x:xs) = f x (foldl (f) x xs)
 
 -- Función que regresa la reversa de una lista.
 reversa :: [a] -> [a]
@@ -116,8 +114,12 @@ unicaVez l = error "Función no implementada"
 
 -- Función que recibe una lista y regresa una lista de pares (k, x), donde k es
 -- el número de apariciones consecutivas de x en la lista recibida.
-apariciones :: [a] -> [(Int, a)]
-apariciones ls = error "Función no implementada"
+
+apariciones :: Eq a => [a] -> [(Int, a)]
+apariciones [] = []
+
+
+
 
 -- Función que dada una lista de la forma [a0,a1,a2, ... , am,an,ao,ap] devuelve
 -- una lista de pares cuyos elementos son (a0,ap) (a1,ao) (a2 an). Se debe 
