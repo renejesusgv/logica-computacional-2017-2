@@ -22,15 +22,18 @@ data AB a = Hoja a
 
 -- Función que regresa el número de hojas del árbol.
 nh :: AB a -> Int
-nh t = error "Función no implementada"
+nh (Hoja a) = 1
+nh (Mkt a b) = nh a + nh b
 
 -- Función que regresa el número de nodos internos del árbol.
 nni :: AB a -> Int
-nni t = error "Función no implementada"
+nni (Hoja a) = 0
+nni (Mkt a b) = 1 + nni a + nni b
 
 -- Función que determina si un elemento está contenido en el árbol.
 elemA :: Eq a => AB a -> a -> Bool
-elemA t e = error "Función no implementada"
+elemA (Hoja x) a | x == a = True 
+-- elemA (Mkt x y) a = elemA y a 
 
 -- Función que toma un árbol y regresa una lista con los elementos en la forma
 -- inorder.
