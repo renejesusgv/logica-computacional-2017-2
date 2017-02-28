@@ -34,8 +34,8 @@ data EA = Var Id
         | Res EA EA
         | Mul EA EA
         | Div EA EA
-        | Paren EA deriving(Show, Eq)
-
+        | Paren EA deriving(Eq)
+ 	
 -- Sinónimo para representar al ambiente de evaluación
 type Env = [(Id, Int)]
 
@@ -43,12 +43,33 @@ type Env = [(Id, Int)]
 instance Show EA where
    show exp = showEA exp
 
+aEntero :: Nat -> Int
+aEntero Cero = 0
+aEntero (Suc n) = 1 + aEntero n
+
 -- Función que dada una expresión aritmética, devuelve su representación como
 -- cadena.
 showEA :: EA -> String
-showEA s = error "Función no implementada"
+showEA (Var id) = show id
+showEA (Cte nat) = show (aEntero nat) 
+showEA (Sum x y) = showEA x ++ " + " ++ showEA y
+showEA (Res x y) = showEA x ++ " - " ++ showEA y
+showEA (Mul x y) = showEA x ++ " * " ++ showEA y
+showEA (Div x y) = showEA x ++ " / " ++ showEA y
+showEA (Paren s) = "(" ++ showEA s ++ ")"
 
 -- Función que dada una expresión y un ambiente de evaluación, devuelve el 
 -- resultado de evaluar dicha expresión como el entero que la representa.
 evalua :: EA -> Env -> Int
-evalua ea env = error "Función no implementada"
+evalua (Var id) [] = error "No se encontró la variable en el ambiente" 
+evalua (Var id) l = sustituyeEA id l
+evalua (Cte nat) l = aEntero nat
+evalua (Sum x y) l = (evalua x l) + (evalua y l)
+evalua (Res x y) l = (evalua x l) - (evalua y l)
+evalua (Mul x y) l = (evalua x l) * (evalua y l)
+evalua (Div x y) l = div (evalua x l) (evalua y l)
+
+sustituyeEA :: Id -> Env -> Int
+sustituyeEA x ((id,val):ys)
+	| x == id = val
+	| otherwise = sustituyeEA x ys
