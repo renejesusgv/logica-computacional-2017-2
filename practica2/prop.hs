@@ -150,7 +150,15 @@ apNegacion (Neg (Op p o q))
 
 -- Función que regresa la forma normal conjuntiva de una expresión
 formaNC :: Prop -> Prop
-formaNC f = error "Función no implementada"
+formaNC x = distr (formaNN x)
+
+distr:: Prop -> Prop
+distr (FA (Var v)) = (FA (Var v))
+distr (FA (Cte c)) = (FA (Cte c))
+distr (Neg x) = Neg (distr x)
+distr (Op p Disy (Op q Conj r))= (Op (formaNC(Op p Disy q)) Conj (formaNC(Op p Disy r)))  
+distr (Op (Op q Conj r) Disy p)= (Op (formaNC(Op p Disy q)) Conj (formaNC(Op p Disy r)))  
+distr x = x
 
 -- Función que verifica si una fórmula es tautología
 esTautologia :: Prop -> Booleano
