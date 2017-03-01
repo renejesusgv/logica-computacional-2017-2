@@ -131,7 +131,7 @@ elimCon (Op p o q)
   | o == Conj = (Op (elimCon p) Conj (elimCon q))
   | o == Disy = (Op (elimCon p) Disy (elimCon q))
   | o == Impl = (Op (Neg (elimCon p)) Disy (elimCon q))
-  | o == Syss = (Op (elimCon(Op p Conj q)) Disy (elimCon(Op (Neg p) Conj (Neg q))))
+  | o == Syss = (Op (elimCon(Op p Impl q)) Conj (elimCon(Op q Impl p)))
   | otherwise = (Op p o q)
 
 --consta
@@ -182,6 +182,12 @@ esSatisfacible f = error "Función no implementada"
 -- Función que obtiene las cláusulas de una fórmula
 clausulas :: Prop -> [Prop]
 clausulas x = creaClausulas (formaNC x)
+
+creaClausulas:: Prop -> [Prop]
+creaClausulas (Op p Disy q) = [(Op p Disy q)]
+creaClausulas (Op (Op p Conj q) Conj r) =  [p]++ creaClausulas q ++ creaClausulas r
+creaClausulas (Op p Conj q) =  [p] ++ creaClausulas q
+creaClausulas x = [x]
 
 creaClausulas:: Prop -> [Prop]
 creaClausulas (Op p Disy q) = [(Op p Disy q)]
