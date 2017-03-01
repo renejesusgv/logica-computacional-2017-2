@@ -33,7 +33,8 @@ nni (Mkt a b) = 1 + nni a + nni b
 -- Función que determina si un elemento está contenido en el árbol.
 elemA :: Eq a => AB a -> a -> Bool
 elemA (Hoja x) a | x == a = True 
--- elemA (Mkt x y) a = elemA y a 
+elemA (Hoja x) a | x /= a = False  
+elemA (Mkt x y) a = elemA x a || elemA y a
 
 -- Función que toma un árbol y regresa una lista con los elementos en la forma
 -- inorder.
