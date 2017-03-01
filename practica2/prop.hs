@@ -57,25 +57,108 @@ instance Show Prop where
 -- Función que realiza la sustitución simultánea dada una lista con las 
 -- sustituciones.
 sustSimult :: Prop -> [(VarP, Prop)] -> Prop
-sustSimult p l = error "Función no implementada"
+sustSimult (FA (Cte c)) l = (FA (Cte c))
+sustSimult (FA (Var v)) l = buscaSustitucion v l
+sustSimult (Neg x) l = Neg (sustSimult x l)
+sustSimult (Op p o q) l = Op (sustSimult p l) o (sustSimult q l)  
+
+
+buscaSustitucion::VarP ->[(VarP, Prop)]-> Prop
+buscaSustitucion x [] = (FA (Var x))
+buscaSustitucion x ((v,p):ys) 
+  | x == v = p 
+  | otherwise = buscaSustitucion x ys 
 
 -- Función que regresa el valor de interpretación aplicada a una función en los
 -- estados recibidos como parámetros.
 interpreta :: Prop -> [Estado] -> Booleano
-interpreta p l = error "Función no implementada"
+interpreta (FA (Var c)) [] = error "No se encontŕo el estado de la variable"
+interpreta (FA (Var c)) e = interpreta (buscaInterpretacion (FA (Var c)) e) e
+interpreta (FA (Cte V)) _ = V
+interpreta (FA (Cte F)) _ = F
+interpreta (Neg (FA (Cte F))) e = V
+interpreta (Neg (FA (Cte V))) e = F
+interpreta (Neg x) e = interpreta (Neg (FA (Cte (interpreta x e)))) e
+interpreta (Op p o q) e
+  | o == Conj && ((interpreta p e) == (interpreta q e) && (interpreta q e) == V) =  V
+  | o == Conj = F
+  | o == Disy && ((interpreta p e) == (interpreta q e) && (interpreta q e) ==  F) = F
+  | o == Disy = V
+  | o == Impl && (interpreta p e) == V && (interpreta q e) == F = F
+  | o == Impl = V
+  | o == Syss && (interpreta p e) == (interpreta q e) = (interpreta p e)
+  | o == Syss = F
+
+
+buscaInterpretacion :: Prop -> [Estado] -> Prop
+buscaInterpretacion (FA (Var c)) [] = error "No se encontŕo el estado de la variable"
+buscaInterpretacion (FA (Var v)) ((var, b):ys)
+  | v == var = (FA (Cte b))
+  | otherwise = buscaInterpretacion (FA (Var v)) ys
+
 
 -- Función que dada una fórmula, elimina: dobles negaciones, disyunciones o 
 -- conjunciones de la misma variable y disyunciones con constantes.
 simplifica :: Prop -> Prop
-simplifica p = error "Función no implementada"
+simplifica (FA (Cte c)) = (FA (Cte c))
+simplifica (FA (Var v)) = (FA (Var v))
+simplifica (Neg (Neg x)) = simplifica x
+simplifica (Neg x) = Neg (simplifica x)
+simplifica (Op p o q) 
+  | p == q && (o == Conj || o == Disy) = p
+  | p == (FA (Cte V)) && o == Conj = q 
+  | q == (FA (Cte V)) && o == Conj = p 
+  | p == (FA (Cte F)) && o == Disy = q
+  | q == (FA (Cte F)) && o == Disy = p
+  | p == (FA (Cte F)) && o == Conj = (FA (Cte F))
+  | q == (FA (Cte F)) && o == Conj = (FA (Cte F))
+  | p == (FA (Cte V)) && o == Disy = (FA (Cte V))
+  | q == (FA (Cte V)) && o == Disy = (FA (Cte V))
+  | otherwise = (Op p o q)
 
 -- Función que regresa la forma normal negativa de una expresión
 formaNN :: Prop -> Prop
-formaNN f = error "Función no implementada"
+formaNN (FA (Var v)) = (FA (Var v))
+formaNN (FA (Cte c)) = (FA (Cte c))
+formaNN x = apNegacion (elimCon x)
+
+
+--formaNN (Neg x) = apNegacion x
+elimCon:: Prop -> Prop
+elimCon (FA (Var v)) = (FA (Var v))
+elimCon (FA (Cte c)) = (FA (Cte c))
+elimCon (Neg x) = Neg (elimCon x)
+elimCon (Op p o q)
+  | o == Conj = (Op (elimCon p) Conj (elimCon q))
+  | o == Disy = (Op (elimCon p) Disy (elimCon q))
+  | o == Impl = (Op (Neg (elimCon p)) Disy (elimCon q))
+  | o == Syss = (Op (elimCon(Op p Conj q)) Disy (elimCon(Op (Neg p) Conj (Neg q))))
+  | otherwise = (Op p o q)
+
+--consta
+apNegacion:: Prop -> Prop 
+apNegacion (FA (Var v)) = (FA (Var v))
+apNegacion (FA (Cte c)) = (FA (Cte c))
+apNegacion (Neg (FA (Var v))) = (Neg (FA (Var v)))
+apNegacion (Neg (FA (Cte c))) = (Neg (FA (Cte c)))
+apNegacion (Neg (Neg x)) = apNegacion x
+apNegacion (Op p o q) = (Op (apNegacion p) o (apNegacion q))
+apNegacion (Neg (Op p o q))
+  | o == Disy = (Op (apNegacion (Neg p)) Conj (apNegacion (Neg q)))
+  | o == Conj = (Op (apNegacion (Neg p)) Disy (apNegacion (Neg q)))
+  | otherwise = (Op p o q)
 
 -- Función que regresa la forma normal conjuntiva de una expresión
 formaNC :: Prop -> Prop
-formaNC f = error "Función no implementada"
+formaNC x = distr (formaNN x)
+
+distr:: Prop -> Prop
+distr (FA (Var v)) = (FA (Var v))
+distr (FA (Cte c)) = (FA (Cte c))
+distr (Neg x) = Neg (distr x)
+distr (Op p Disy (Op q Conj r))= (Op (formaNC(Op p Disy q)) Conj (formaNC(Op p Disy r)))  
+distr (Op (Op q Conj r) Disy p)= (Op (formaNC(Op p Disy q)) Conj (formaNC(Op p Disy r)))  
+distr x = x
 
 -- Función que verifica si una fórmula es tautología
 esTautologia :: Prop -> Booleano
@@ -88,3 +171,40 @@ esSatisfacible f = error "Función no implementada"
 -- Función que obtiene las cláusulas de una fórmula
 clausulas :: Prop -> [Prop]
 clausulas f = error "Función no implementada"
+
+
+--Ejercicios Sesion 3 de laboratorio 
+
+--1 a)
+conjuncion:: Booleano-> Booleano-> Booleano
+conjuncion V V = V
+conjuncion _ _ = F
+
+--1 b)
+implicacion :: Booleano -> Booleano -> Booleano
+implicacion V F = F
+implicacion _ _ = V
+
+--1 c)
+equivalencia :: Booleano -> Booleano -> Booleano
+equivalencia V V = V
+equivalencia F F = V
+equivalencia _ _ = F
+
+--2 a)
+con:: Prop -> Int
+con (FA x) =0
+con (Neg x) = 1 + con x
+con (Op p o q) = 1 + con p + con q
+
+--2 b)
+vars :: Prop -> [Prop]
+vars (FA x) = [(FA x)] 
+vars (Neg p) = vars p
+vars (Op p o q) = vars p ++ vars q
+
+--2 c)
+atom :: Prop -> Int
+atom (FA _) = 1
+atom (Neg p) = atom p
+atom (Op p o q) = atom p + atom q
