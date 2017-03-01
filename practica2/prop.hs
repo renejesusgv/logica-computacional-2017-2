@@ -89,7 +89,6 @@ interpreta (Op p o q) e
   | o == Syss && (interpreta p e) == (interpreta q e) = (interpreta p e)
   | o == Syss = F
 
-
 buscaInterpretacion :: Prop -> [Estado] -> Prop
 buscaInterpretacion (FA (Var c)) [] = error "No se encontŕo el estado de la variable"
 buscaInterpretacion (FA (Var v)) ((var, b):ys)
@@ -150,7 +149,7 @@ apNegacion (Neg (Op p o q))
 
 -- Función que regresa la forma normal conjuntiva de una expresión
 formaNC :: Prop -> Prop
-formaNC x = distr (formaNN x)
+formaNC x = simplifica (distr (formaNN x))
 
 distr:: Prop -> Prop
 distr (FA (Var v)) = (FA (Var v))
@@ -160,9 +159,21 @@ distr (Op p Disy (Op q Conj r))= (Op (formaNC(Op p Disy q)) Conj (formaNC(Op p D
 distr (Op (Op q Conj r) Disy p)= (Op (formaNC(Op p Disy q)) Conj (formaNC(Op p Disy r)))  
 distr x = x
 
+
+buscaComplementarias :: Prop -> Booleano
+buscaComplementarias (FA (Cte V)) = V
+buscaComplementarias (Neg (FA (Cte V))) = F
+--mal, debe ser recursivo, faltan  casos cuando se niega
+--la disy
+buscaComplementarias (Op p o q)
+  | p == (FA (Cte V)) || q == (FA (Cte V)) = V
+  | p == (Neg q) || q == (Neg p) = V
+buscaComplementarias x = F
+  
 -- Función que verifica si una fórmula es tautología
 esTautologia :: Prop -> Booleano
-esTautologia f = error "Función no implementada"
+esTautologia x = if elem F cls == True then F else V 
+  where cls = map buscaComplementarias (clausulas x)
 
 -- Función que decide si una fórmula es satisfacible
 esSatisfacible :: Prop -> Booleano
@@ -170,8 +181,13 @@ esSatisfacible f = error "Función no implementada"
 
 -- Función que obtiene las cláusulas de una fórmula
 clausulas :: Prop -> [Prop]
-clausulas f = error "Función no implementada"
+clausulas x = creaClausulas (formaNC x)
 
+creaClausulas:: Prop -> [Prop]
+creaClausulas (Op p Disy q) = [(Op p Disy q)]
+creaClausulas (Op (Op p Conj q) Conj r) =  [p]++ creaClausulas q ++ creaClausulas r
+creaClausulas (Op p Conj q) =  [p] ++ creaClausulas q
+creaClausulas x = [x]
 
 --Ejercicios Sesion 3 de laboratorio 
 
