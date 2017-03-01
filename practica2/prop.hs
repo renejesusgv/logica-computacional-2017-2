@@ -132,7 +132,7 @@ elimCon (Op p o q)
   | o == Conj = (Op (elimCon p) Conj (elimCon q))
   | o == Disy = (Op (elimCon p) Disy (elimCon q))
   | o == Impl = (Op (Neg (elimCon p)) Disy (elimCon q))
-  | o == Syss = (Op (elimCon(Op p Impl q)) Conj (elimCon(Op (Neg q) Impl (Neg p))))
+  | o == Syss = (Op (elimCon(Op p Impl q)) Conj (elimCon(Op q Impl p)))
   | otherwise = (Op p o q)
 
 --consta
