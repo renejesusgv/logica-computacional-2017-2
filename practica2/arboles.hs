@@ -39,7 +39,8 @@ elemA (Mkt x y) a = elemA x a || elemA y a
 -- Función que toma un árbol y regresa una lista con los elementos en la forma
 -- inorder.
 inorderA :: AB a -> [a]
-inorderA t = error "Función no implementada"
+inorderA (Hoja a) = [a]
+inorderA (Mkt (Hoja a)(Mkt t1 t2)) = inorderA t1 ++ [a] ++ inorderA t2
 
 -- Función que toma un elemento y lo agrega al árbol.
 agregaHoja :: AB a -> a -> AB a
@@ -53,4 +54,5 @@ mapA (Mkt x y) f = Mkt (mapA x f) (mapA y f)
 
 -- Función que regresa la profundidad del árbol.
 profundidad :: AB a -> Int
-profundidad t = error "Función no implementada"
+profundidad (Hoja a) = 1
+profundidad (Mkt (t1)(t2)) = max(profundidad t1) (profundidad t2) + 1
