@@ -48,7 +48,8 @@ agregaHoja t e = error "Función no implementada"
 -- Función que dado un árbol y una función, aplica la misma a cada elemento del
 -- árbol.
 mapA :: AB a -> (a -> b) -> AB b
-mapA t f = error "Función no implementada"
+mapA (Hoja x) f = Hoja (f x)
+mapA (Mkt x y) f = Mkt (mapA x f) (mapA y f)
 
 -- Función que regresa la profundidad del árbol.
 profundidad :: AB a -> Int
