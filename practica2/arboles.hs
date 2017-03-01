@@ -43,8 +43,11 @@ inorderA (Hoja a) = [a]
 inorderA (Mkt (Hoja a)(Mkt t1 t2)) = inorderA t1 ++ [a] ++ inorderA t2
 
 -- Función que toma un elemento y lo agrega al árbol.
+-- Función que toma un elemento y lo agrega al árbol.
 agregaHoja :: AB a -> a -> AB a
-agregaHoja t e = error "Función no implementada"
+agregaHoja (Hoja a) e = (Mkt (Hoja a)(Hoja e))
+agregaHoja (Mkt t1 t2) e = (Mkt (Mkt t1 (Hoja e))t2)
+
 
 -- Función que dado un árbol y una función, aplica la misma a cada elemento del
 -- árbol.
