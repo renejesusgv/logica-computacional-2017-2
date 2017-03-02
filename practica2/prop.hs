@@ -80,13 +80,13 @@ interpreta (Neg (FA (Cte F))) e = V
 interpreta (Neg (FA (Cte V))) e = F
 interpreta (Neg x) e = interpreta (Neg (FA (Cte (interpreta x e)))) e
 interpreta (Op p o q) e
-  | o == Conj && ((interpreta p e) == (interpreta q e) && (interpreta q e) == V) =  V
+  | o == Conj && ((interpreta p e) == (interpreta q e) && (interpreta p e) == V) =  V
   | o == Conj = F
-  | o == Disy && ((interpreta p e) == (interpreta q e) && (interpreta q e) ==  F) = F
+  | o == Disy && ((interpreta p e) == (interpreta q e) && (interpreta p e) ==  F) = F
   | o == Disy = V
   | o == Impl && (interpreta p e) == V && (interpreta q e) == F = F
   | o == Impl = V
-  | o == Syss && (interpreta p e) == (interpreta q e) = (interpreta p e)
+  | o == Syss && (interpreta p e) == (interpreta q e) = V
   | o == Syss = F
 
 
@@ -120,7 +120,7 @@ simplifica (Op p o q)
 formaNN :: Prop -> Prop
 formaNN (FA (Var v)) = (FA (Var v))
 formaNN (FA (Cte c)) = (FA (Cte c))
-formaNN x = apNegacion (elimCon x)
+formaNN x = simplifica (apNegacion (elimCon x))
 
 
 --formaNN (Neg x) = apNegacion x
@@ -152,7 +152,8 @@ apNegacion (Neg (Op p o q))
 formaNC :: Prop -> Prop
 formaNC x = distr (formaNN x)
 
-distr:: Prop -> Prop
+--Funcion que aplica distributividad a una formula proposicional
+distr :: Prop -> Prop
 distr (FA (Var v)) = (FA (Var v))
 distr (FA (Cte c)) = (FA (Cte c))
 distr (Neg x) = Neg (distr x)
@@ -162,11 +163,35 @@ distr x = x
 
 -- Función que verifica si una fórmula es tautología
 esTautologia :: Prop -> Booleano
-esTautologia f = error "Función no implementada"
+esTautologia f = auxTautologia  f (estados  f)
+
+auxTautologia :: Prop -> [[Estado]] -> Booleano
+auxTautologia p [] = V
+auxTautologia p (x:xs)
+	| interpreta p x == F = F
+	| otherwise = auxTautologia p xs
 
 -- Función que decide si una fórmula es satisfacible
 esSatisfacible :: Prop -> Booleano
-esSatisfacible f = error "Función no implementada"
+esSatisfacible (FA (Cte b)) = b
+esSatisfacible p = auxSatisfacible p (estados p)
+
+-- Función que decide si todos los estados son modelos
+auxSatisfacible :: Prop -> [[Estado]] -> Booleano
+auxSatisfacible p [] = F
+auxSatisfacible p (x:xs)
+	| interpreta p x == V = V
+	| otherwise = auxSatisfacible p xs
+
+--Función que regresa los estados posibles de una proposicion
+estados :: Prop -> [[Estado]]
+estados p = tablaVerdad ( unicaVez (vars p)) 
+
+--Funcion que regresa la tabla de verdad de a cuerdo a las variables 
+tablaVerdad :: [Prop] -> [[(Estado)]]
+tablaVerdad [] = [[]]
+tablaVerdad ((FA (Var x)):xs) = (map ((x,V):) ts) ++ (map ((x,F):) ts) 
+	where ts = tablaVerdad xs
 
 -- Función que obtiene las cláusulas de una fórmula
 clausulas :: Prop -> [Prop]
@@ -179,7 +204,7 @@ creaClausulas (Op p Conj q) =  [p] ++ creaClausulas q
 creaClausulas x = [x]
 
 
---Ejercicios Sesion 3 de laboratorio 
+--Ejercicios Sesion 3 de laboratorio (nos sirven para alguanas funciones)
 
 --1 a)
 conjuncion:: Booleano-> Booleano-> Booleano
@@ -214,3 +239,7 @@ atom :: Prop -> Int
 atom (FA _) = 1
 atom (Neg p) = atom p
 atom (Op p o q) = atom p + atom q
+
+unicaVez :: [Prop] -> [Prop]
+unicaVez [] = []
+unicaVez (x:xs) = if elem x xs then  unicaVez xs else x:unicaVez xs

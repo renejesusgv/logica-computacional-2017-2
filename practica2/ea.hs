@@ -35,7 +35,7 @@ data EA = Var Id
         | Mul EA EA
         | Div EA EA
         | Paren EA deriving(Eq)
- 	
+ 
 -- Sinónimo para representar al ambiente de evaluación
 type Env = [(Id, Int)]
 
@@ -71,5 +71,5 @@ evalua (Div x y) l = div (evalua x l) (evalua y l)
 
 sustituyeEA :: Id -> Env -> Int
 sustituyeEA x ((id,val):ys)
-	| x == id = val
-	| otherwise = sustituyeEA x ys
+  | x == id = val
+  | otherwise = sustituyeEA x ys
