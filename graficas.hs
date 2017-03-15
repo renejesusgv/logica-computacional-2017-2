@@ -71,3 +71,38 @@ comparaList [] l2 = True
 comparaList (x:xs) l2 
 	| elem x l2 = comparaList xs l2
 	| otherwise = False 
+
+--Función que dada una gráfica determina si es completa o no.
+esCompleta :: Grafica -> Bool
+esCompleta g 
+	| comparaAris (cadaVertice (vertices g) (vertices g)) (aristasG (verticesAd g)) ==False = False
+	| otherwise = True
+
+--Crea todas las aristas de una gráfica completa
+cadaVertice:: [Vertice]->[Vertice]-> [(Vertice,Vertice)]
+cadaVertice [] l= []
+cadaVertice (x:xs) l = aristasC x l ++ cadaVertice xs l
+
+--Crea aristas doblemente dirigidas
+aristasC:: Vertice->[Vertice]-> [(Vertice,Vertice)]
+aristasC v [] = []
+aristasC v (x:xs) 
+	| v == x =  aristasC v xs 
+	| otherwise = [(v,x)]++ [(x,v)]++ aristasC v xs
+
+--Crea las aristas de una gráfica 
+aristasG:: [[Vertice]]-> [(Vertice,Vertice)]
+aristasG [] = []
+aristasG (x:xs) = cadaVertice2 x x ++ aristasG xs
+
+--Aplica las aristas doblemente dirigidas por cada adyacencia de un vértice.
+cadaVertice2:: [Vertice]->[Vertice]-> [(Vertice,Vertice)]
+cadaVertice2 [] l= []
+cadaVertice2 (x:xs) l = aristasC x l 
+
+--Compara si todas las aristas de una lista están en otra lista.
+comparaAris:: [(Vertice,Vertice)]->[(Vertice,Vertice)]->Bool
+comparaAris [] l2 = True
+comparaAris (x:xs) l2 
+	| elem x l2 = comparaAris xs l2
+	| otherwise = False
