@@ -326,10 +326,69 @@ simplifica (Op p o q)
 
 -- Función que toma dos cláusulas y una literal como parámetro y regresa su 
 -- resolución binaria.
--- resBin :: Clausula -> Clausula -> Literal -> Clausula
--- resBin c1 l l = c1
--- resBin c1 c2 l 
---   | 
+resBin :: Clausula -> Clausula -> Literal -> Clausula
+resBin (CL (LI l1)) (CL (NE l2)) (LI x)
+  | l1 == l2 && x == l1 = Vacia
+  | otherwise = (Ope  (CL (LI l1)) Dis (CL (NE l2)))
+resBin (CL (NE l1)) (CL (LI l2)) (LI x)
+  | l1 == l2 && x == l1 = Vacia
+  | otherwise = (Ope  (CL (LI l1)) Dis (CL (NE l2)))
+resBin c1 (CL (LI l1)) x
+  | auxVerifica c1 (CL (LI l1)) x = auxResBin c1 x
+  | otherwise = (Ope c1 Dis (CL (LI l1)))
+resBin (CL (LI l1)) c2 x
+  | auxVerifica (CL (LI l1)) c2 x = auxResBin c2 x
+  | otherwise = (Ope (CL (LI l1)) Dis c2)
+resBin c1 (CL (NE l1)) x
+  | auxVerifica c1 (CL (NE l1)) x = auxResBin c1 x
+  | otherwise = (Ope c1 Dis (CL (NE l1)))
+resBin (CL (NE l1)) c2 x
+  | auxVerifica (CL (NE l1)) c2 x = auxResBin c2 x
+  | otherwise = (Ope (CL (NE l1)) Dis c2)
+resBin c1 c2 x
+  | auxVerifica c1 c2 x = (Ope (auxResBin c1 x) Dis (auxResBin c2 x))
+  | otherwise = (Ope c1 Dis c2)
+
+
+-- Función que dada una cláusula regresa su lista de literales
+listaLiterales :: Clausula -> [Literal]
+listaLiterales (CL (LI l)) = [(LI l)]
+listaLiterales (CL (NE l)) = [(NE l)]
+listaLiterales (Ope (c1) Dis (c2)) = listaLiterales(c1)++listaLiterales(c2)
+
+--Funcion que verifica que una literal se encuentre en ambas clausulas.
+auxVerifica :: Clausula -> Clausula -> Literal -> Bool
+auxVerifica c1 c2 (LI x)
+  | elem (LI x) (listaLiterales c1) && elem (NE x) (listaLiterales c2) = True
+  | elem (NE x) (listaLiterales c1) && elem (LI x) (listaLiterales c2) = True
+  | otherwise = False
+
+--Funcion auxiliar para resBin que regresa la clausula sin la literal pasada como parametro
+--en caso de que la encuentre.
+auxResBin :: Clausula -> Literal -> Clausula
+auxResBin (CL (LI l)) (LI x) 
+  | l == x = Vacia
+  | otherwise = (CL (LI l))
+auxResBin (CL (NE l)) (LI x) 
+  | l == x = Vacia
+  | otherwise = (CL (NE l))
+auxResBin (Ope (CL (LI l1)) o (CL (LI l2))) (LI x)
+  | x == l1 = (CL (LI l2))
+  | x == l2 = (CL (LI l1))
+  | otherwise = (Ope (CL (LI l1)) o (CL (LI l2)))
+auxResBin (Ope (CL (NE l1)) o (CL (LI l2))) (LI x)
+  | x == l1 = (CL (LI l2))
+  | x == l2 = (CL (NE l1))
+  | otherwise = (Ope (CL (NE l1)) o (CL (LI l2)))
+auxResBin (Ope (CL (LI l1)) o (CL (NE l2))) (LI x)
+  | x == l1 = (CL (NE l2))
+  | x == l2 = (CL (LI l1))
+  | otherwise = (Ope (CL (LI l1)) o (CL (NE l2)))
+auxResBin (Ope (CL (NE l1)) o (CL (NE l2))) (LI x)
+  | x == l1 = (CL (NE l2))
+  | x == l2 = (CL (NE l1))  
+  | otherwise = (Ope (CL (NE l1)) o (CL (NE l2)))
+auxResBin (Ope c1 o c2) x = (Ope (auxResBin c1 x) o (auxResBin c2 x))
 
 --PTO. EXTRA
 
