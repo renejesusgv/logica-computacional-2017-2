@@ -106,3 +106,22 @@ comparaAris [] l2 = True
 comparaAris (x:xs) l2 
 	| elem x l2 = comparaAris xs l2
 	| otherwise = False
+
+-- Función que dada una gráfica y un entero k, determina si contiene un clan de
+-- tamaño k.
+clan :: Grafica -> Int-> Bool
+clan g k =  buscaClan (subCjtos k (vertices g)) g   
+
+--De cada conjunto de k-vértices, busca si alguno de ellos es una gráfica 
+--completa. 
+buscaClan:: [[Vertice]]->Grafica-> Bool
+buscaClan [] _ = False
+buscaClan (x:xs) g 
+	| comparaAris (cadaVertice x x) (aristasG (verticesAd g)) ==True = True
+	| otherwise = buscaClan xs g
+
+--Crea subconjuntos de vértices de tamaño k 
+subCjtos :: Int -> [Vertice]-> [[Vertice]]
+subCjtos 0 _ = [[]]
+subCjtos _ [] = []
+subCjtos n (x:xs) = map (x:) (subCjtos (n-1) xs) ++ (subCjtos n xs)
