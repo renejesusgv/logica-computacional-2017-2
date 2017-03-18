@@ -36,7 +36,6 @@ vertices [] = []
 vertices ((v, b):l) = [v]++ vertices l
 
 -- Función que dada una gráfica determina si es conexa o no.
-
 esConexa :: Grafica -> Bool
 esConexa g = if comparaList (vertices g) (aplicar (verticesAd g)) then True else False
 
@@ -53,8 +52,8 @@ verticesAd ((v, b):l) = [[v]++b]++verticesAd l
 compara::[Vertice]->[Vertice]->Bool
 compara [] l2 = False
 compara (x:xs) l2 
-	| elem x l2 = True 
-	| otherwise = compara xs l2
+    | elem x l2 = True 
+    | otherwise = compara xs l2
 
 --Une un par de listas de vértices.
 une::[Vertice]->[Vertice]->[Vertice]
@@ -69,14 +68,14 @@ elimRepetidos (x:xs)= if elem x xs then elimRepetidos xs else [x]++elimRepetidos
 comparaList:: [Vertice]->[Vertice]->Bool
 comparaList [] l2 = True
 comparaList (x:xs) l2 
-	| elem x l2 = comparaList xs l2
-	| otherwise = False 
+    | elem x l2 = comparaList xs l2
+    | otherwise = False 
 
 --Función que dada una gráfica determina si es completa o no.
 esCompleta :: Grafica -> Bool
 esCompleta g 
-	| comparaAris (cadaVertice (vertices g) (vertices g)) (aristasG (verticesAd g)) ==False = False
-	| otherwise = True
+    | comparaAris (cadaVertice (vertices g) (vertices g)) (aristasG (verticesAd g)) ==False = False
+    | otherwise = True
 
 --Crea todas las aristas de una gráfica completa
 cadaVertice:: [Vertice]->[Vertice]-> [(Vertice,Vertice)]
@@ -87,8 +86,8 @@ cadaVertice (x:xs) l = aristasC x l ++ cadaVertice xs l
 aristasC:: Vertice->[Vertice]-> [(Vertice,Vertice)]
 aristasC v [] = []
 aristasC v (x:xs) 
-	| v == x =  aristasC v xs 
-	| otherwise = [(v,x)]++ [(x,v)]++ aristasC v xs
+    | v == x =  aristasC v xs 
+    | otherwise = [(v,x)]++ [(x,v)]++ aristasC v xs
 
 --Crea las aristas de una gráfica 
 aristasG:: [[Vertice]]-> [(Vertice,Vertice)]
@@ -104,8 +103,8 @@ cadaVertice2 (x:xs) l = aristasC x l
 comparaAris:: [(Vertice,Vertice)]->[(Vertice,Vertice)]->Bool
 comparaAris [] l2 = True
 comparaAris (x:xs) l2 
-	| elem x l2 = comparaAris xs l2
-	| otherwise = False
+    | elem x l2 = comparaAris xs l2
+    | otherwise = False
 
 -- Función que dada una gráfica y un entero k, determina si contiene un clan de
 -- tamaño k.
@@ -117,8 +116,8 @@ clan g k =  buscaClan (subCjtos k (vertices g)) g
 buscaClan:: [[Vertice]]->Grafica-> Bool
 buscaClan [] _ = False
 buscaClan (x:xs) g 
-	| comparaAris (cadaVertice x x) (aristasG (verticesAd g)) ==True = True
-	| otherwise = buscaClan xs g
+    | comparaAris (cadaVertice x x) (aristasG (verticesAd g)) ==True = True
+    | otherwise = buscaClan xs g
 
 --Crea subconjuntos de vértices de tamaño k 
 subCjtos :: Int -> [Vertice]-> [[Vertice]]
