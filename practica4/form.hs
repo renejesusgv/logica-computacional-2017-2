@@ -20,11 +20,11 @@ module PrimerOrden where
 type Nombre = String
 
 -- Sinónimo para representar sustituciones.
-type Sust = [(Nombre,Termino)]
+type Sust = [(Nombre,Termino)] 
 
 -- Gramática para representar términos.
 data Termino = V Nombre
-             | F Nombre [Termino] deriving (Eq)
+             | F Nombre [Termino] deriving (Eq, Show)
 
 -- Gramática para representar fórmulas de la Lógica de Primer Orden.
 data FORM = TrueF
@@ -37,11 +37,15 @@ data FORM = TrueF
              | Impl FORM FORM
              | Equi FORM FORM
              | PT Nombre FORM
-             | EX Nombre FORM deriving(Eq)
+             | EX Nombre FORM deriving(Eq, Show)
 
 
 -- Función que regresa las variables libres de una formula
--- fV:: FORM -> [Nombre]
+fV:: FORM -> [Nombre]
+fV TrueF = []
+fV FalseF = []
+fV (Pr n [V x]) = [x]
+fv (Eq (V "") ( ))
 
 
 -- Función que verifica si dos fórmulas son alpha-equivalentes.
