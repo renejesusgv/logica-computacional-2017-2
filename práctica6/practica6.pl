@@ -15,18 +15,20 @@ une([],X,X).
 une([X|Y],Z,[X|W]) :- une(Y,Z,W). 
 
 /*Ejercicio 03*/
+/*** Autómata*/
+/**a */
+transicion(estado(1),b,estado(2)).
+transicion(estado(2),a,final(3)).
+transicion(estado(2),a,estado(2)).
+transicion(final(3),b,estado(2)).
+final(3).
 
-/*	a)	*/
-transicion(q1,b,q2).
-transicion(q2,a,q2).
-transicion(q2,a,q3).
-transicion(q3,b,q2).
-inicial(q1).
-final(q3).
+/**a */
+aceptaAux(final(3),[],final(3)).
+aceptaAux(E,[X|H],_):- transicion(E,X,Y), aceptaAux(Y,H,_).
 
-/*	b)	*/
-acepta([], q3).
-acepta([H|T], estado) :- transicion(estado, H, X), acepta(T,X), final(X).
+acepta(Y):- aceptaAux(estado(1),Y,_), final(3).
+
 
 
 
