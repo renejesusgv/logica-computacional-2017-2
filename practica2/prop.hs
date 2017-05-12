@@ -243,3 +243,26 @@ atom (Op p o q) = atom p + atom q
 unicaVez :: [Prop] -> [Prop]
 unicaVez [] = []
 unicaVez (x:xs) = if elem x xs then  unicaVez xs else x:unicaVez xs
+
+-- Función que toma dos fórmulas proposicionales e indica si son equivalentes.
+equivalentes :: Prop -> Prop -> Booleano
+equivalentes r s
+  | simplifica r == simplifica s = V
+  | obtenEquivalentes r == obtenEquivalentes s = V
+
+--FAlta que funcionen a partir de las leyes de morgan y las de absorción.
+obtenEquivalentes :: Prop -> Prop
+obtenEquivalentes (FA (Var a)) = (FA (Var a))
+obtenEquivalentes (FA (Cte c)) = (FA (Cte c))
+obtenEquivalentes (Neg (FA (Var a))) = (Neg (FA (Var a)))
+obtenEquivalentes (Neg (Neg (FA (Var a)))) = (FA (Var a))
+obtenEquivalentes (Op p o q)
+  | obtenEquivalentes p == obtenEquivalentes (Neg q) && o == Conj = (FA (Cte F))
+  | obtenEquivalentes p == obtenEquivalentes (Neg q) && o == Disy = (FA (Cte V)) 
+  | obtenEquivalentes p == obtenEquivalentes q = p
+obtenEquivalentes (Neg (Op p o q))
+  | o == Conj = (Op (Neg (obtenEquivalentes p)) Disy (Neg (obtenEquivalentes q)))
+  | o == Disy = (Op (Neg (obtenEquivalentes p)) Conj (Neg (obtenEquivalentes q)))
+
+
+
