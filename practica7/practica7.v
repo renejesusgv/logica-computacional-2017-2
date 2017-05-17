@@ -51,11 +51,12 @@ unfold pop.
 trivial.
 Qed.
 
-  
+Proposition ejercicio3: forall (s:stack) (x:nat) , top s = Some x -> s <> empty.
+Proof.
+Qed.
 
-  (*Proposition ejercicio3: forall (s:stack) (x:nat) , top s = Some x -> s <> empty.*)
-    (*Checar*)
-    Theorem ejercicio4: forall (s:stack) (x:nat), pop (push x s) = s.
+(*Checar*)
+Theorem ejercicio4: forall (s:stack) (x:nat), pop (push x s) = s.
 Proof.
 induction s.
 unfold pop.
@@ -63,12 +64,18 @@ reflexivity.
 simpl.
 trivial.
 Qed.   
-      (*Lemma ejercicio5: forall s:stack, s ++ empty = s.
+
+Lemma ejercicio5: forall s:stack, s ++ empty = s.
 Proof.
-unfold concatenate.*)
-
-
-
+induction s.
+unfold concatenate.
+trivial.
+rewrite <- IHs.
+simpl.
+rewrite IHs.
+rewrite IHs.
+trivial.
+Qed.
 
 Theorem ejercicio6: forall n:nat, reverse(push n empty) = push n empty.
 Proof.
