@@ -53,17 +53,34 @@ Qed.
 
   
 
-  Proposition ejercicio3: forall (s:stack) (x:nat) , top s = Some x -> s <> empty.
-    
+  (*Proposition ejercicio3: forall (s:stack) (x:nat) , top s = Some x -> s <> empty.*)
+    (*Checar*)
     Theorem ejercicio4: forall (s:stack) (x:nat), pop (push x s) = s.
-      
-      Lemma ejercicio5: forall s:stack, s ++ empty = s.
+Proof.
+induction s.
+unfold pop.
+reflexivity.
+simpl.
+trivial.
+Qed.   
+      (*Lemma ejercicio5: forall s:stack, s ++ empty = s.
+Proof.
+unfold concatenate.*)
 
-        Theorem ejercicio6: forall n:nat, reverse(push n empty) = push n empty.
 
-          Lemma ejercicio7: forall s1 s2 s3:stack, (s1 ++ s2) ++ s3 = s1 ++ (s2 ++ s3).
 
-            Theorem ejercicio8: forall s1 s2:stack, reverse (concatenate s1 s2) = concatenate (reverse s2) (reverse
+
+Theorem ejercicio6: forall n:nat, reverse(push n empty) = push n empty.
+Proof.
+unfold reverse.
+simpl.
+trivial.
+Qed.
+
+Lemma ejercicio7: forall s1 s2 s3:stack, (s1 ++ s2) ++ s3 = s1 ++ (s2 ++ s3).
+
+
+Theorem ejercicio8: forall s1 s2:stack, reverse (concatenate s1 s2) = concatenate (reverse s2) (reverse
                                                                                                               s1).
 
               
