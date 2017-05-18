@@ -53,9 +53,15 @@ Qed.
 
 Proposition ejercicio3: forall (s:stack) (x:nat) , top s = Some x -> s <> empty.
 Proof.
+intros.
+induction s.
+contradict H.
+discriminate.
+contradict H.
+unfold top.
+discriminate.
 Qed.
 
-(*Checar*)
 Theorem ejercicio4: forall (s:stack) (x:nat), pop (push x s) = s.
 Proof.
 induction s.
