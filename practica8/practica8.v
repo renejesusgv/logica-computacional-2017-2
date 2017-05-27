@@ -92,6 +92,16 @@ contradict H.
 discriminate.
 Qed.
 
+(*5. alternativo-*)
+Theorem introImpl: forall (p q:booleano), p=btrue-> q=btrue-> impl p q=btrue.
+Proof.
+intros.
+rewrite H.
+rewrite H0.
+simpl.
+trivial.
+Qed.
+
 (*PARTE 2*)
 Example ejemplo2: forall (p q r: booleano), p = btrue-> neg (neg(and q r))=btrue->
 and (neg (neg p)) r= btrue.
