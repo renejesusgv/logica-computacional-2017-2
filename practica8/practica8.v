@@ -123,3 +123,10 @@ unfold neg.
 (*PARTE 3*)
 Theorem elimForall: forall (p:A->Prop), (forall y:A, p y) -> p x.
 
+(*PARTE 4*)
+Example ejemplo5: forall (p q :A->Prop), (forall (y:A), p y -> q y) -> (forall (y:A), p y) -> (forall (y:A), q y).
+Proof.
+intros.
+apply H.
+apply H0.
+Qed.
